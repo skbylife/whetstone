@@ -1,10 +1,14 @@
 # Whetstone · 磨刀石
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 > Evidence-led recovery for coding-agent runs blocked by tool, context, dependency, rate-limit, or permission constraints.
 
 When an agent is blocked, the failure is often not in the user’s objective. A tool may no-op, a context or turn budget may be exhausted, a dependency may be absent, or a provider may return a rate limit. The unhelpful defaults are to give up, repeat the same call, or make a broad environment change that exceeds authority.
 
 We made Whetstone to make the recovery step explicit: **preserve the user’s objective, establish evidence, attempt the smallest safe remedy, prove the blocked operation works, then return to the work.** Recovery is never the deliverable by itself.
+
+The name comes from the Chinese saying **“工欲善其事，必先利其器”** — *to do good work, one must first sharpen one’s tools.* It is Whetstone’s operating philosophy: before pushing harder on a blocked objective, first restore the tool path safely and prove it works.
 
 ## What Whetstone is—and is not
 
