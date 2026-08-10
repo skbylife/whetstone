@@ -1,7 +1,7 @@
 ---
 name: whetstone
-description: Use when agent runs are blocked by tool or context failures.
-version: 1.0.0
+description: MANDATORY: tool error/no-op, turn cap, or rate limit.
+version: 1.0.1
 author: Hermes Agent
 license: MIT
 metadata:
