@@ -4,33 +4,33 @@
 
 > Evidence-led recovery for coding-agent runs blocked by tool, context, dependency, rate-limit, or permission constraints.
 
-When an agent is blocked, the failure is often not in the user’s objective. A tool may no-op, a context or turn budget may be exhausted, a dependency may be absent, or a provider may return a rate limit. The unhelpful defaults are to give up, repeat the same call, or make a broad environment change that exceeds authority.
+When an agent is blocked, the user’s objective can remain sound while the execution path is constrained: a tool may no-op, a context or turn budget may be exhausted, a dependency may be absent, or a provider may return a rate limit.
 
-We made Whetstone to make the recovery step explicit: **preserve the user’s objective, establish evidence, attempt the smallest safe remedy, prove the blocked operation works, then return to the work.** Recovery is never the deliverable by itself.
+We made Whetstone to make recovery explicit: **preserve the user’s objective, establish evidence, attempt the smallest safe remedy, prove the blocked operation works, then return to the work.**
 
-The name comes from the Chinese saying **“工欲善其事，必先利其器”** — *to do good work, one must first sharpen one’s tools.* It is Whetstone’s operating philosophy: before pushing harder on a blocked objective, first restore the tool path safely and prove it works.
+The name comes from the Chinese saying **“工欲善其事，必先利其器”** — *to do good work, one must first sharpen one’s tools.* It is Whetstone’s operating philosophy: before adding effort to a blocked objective, restore the tool path safely and prove it works.
 
-## What Whetstone is—and is not
+## Where Whetstone fits
 
-Whetstone is a policy/workflow skill for a concrete, observed execution blocker. It is not an autonomous reliability platform, a generic debugger, or a task-completion system.
+Whetstone is a policy/workflow skill for a concrete, observed execution blocker. It keeps recovery bounded and moves the agent back to the original work.
 
-| If you need to… | Use |
+| Situation | Route |
 |---|---|
-| Recover from an evidenced tool/no-op, context/turn, rate-limit, dependency, provider/authentication, permission, or documented runtime constraint | **Whetstone** |
-| Keep delivering after the execution path is usable but work repeatedly stalls or fails | **PUA** |
-| Diagnose or configure Hermes itself | **Hermes troubleshooting** |
+| An evidenced tool/no-op, context/turn, rate-limit, dependency, provider/authentication, permission, or documented runtime constraint blocks progress | **Whetstone** |
+| The execution path is usable and delivery benefits from continued task-level persistence | **PUA** |
+| The work is diagnosing or configuring Hermes itself | **Hermes troubleshooting** |
 
-Do **not** use Whetstone merely because work is difficult, ambiguous, long, or uncertain.
+Whetstone starts from a specific observed blocker and routes broader task persistence and platform diagnosis to their dedicated workflows.
 
 ## The recovery contract
 
 Whetstone turns a blocker into a bounded decision loop:
 
 1. **Preserve the objective.** Record the original goal, constraints, acceptance criteria, and the exact failed result or observed state.
-2. **Classify the blocker.** Choose one path: local/reversible recovery, user action required, or hard stop.
-3. **Recover once.** Apply the lowest-risk documented remedy. For a transient failure, make one bounded retry; do not repeat an identical failure.
-4. **Prove recovery.** Rerun the original blocked operation, or an explicitly equivalent focused check. A configuration edit, plan, or HTTP 200 alone is not proof.
-5. **Resume or hand off.** Return immediately to the original objective. If still blocked, provide the objective, symptom, evidence, attempted remedies, and the smallest exact user action required.
+2. **Classify the blocker.** Select one path: local/reversible recovery, user action required, or hard stop.
+3. **Recover once.** Apply the lowest-risk documented remedy. A transient failure receives one bounded retry; a repeated identical failure receives a new hypothesis.
+4. **Prove recovery.** Rerun the original blocked operation, or an explicitly equivalent focused check. Recovery proof comes from the operation itself.
+5. **Resume or hand off.** Return immediately to the original objective. A remaining blocker receives a compact handoff with the objective, symptom, evidence, attempted remedies, and smallest exact user action.
 
 The complete contract lives in [SKILL.md](SKILL.md).
 
@@ -39,20 +39,20 @@ The complete contract lives in [SKILL.md](SKILL.md).
 | Pattern | Start with evidence | Lowest-risk path | Recovery is proven when… |
 |---|---|---|---|
 | Tool failure or no-op | Failed result plus relevant prerequisite state | Inspect the documented prerequisite; make one local remedy | The same tool operation succeeds |
-| Context or turn exhaustion | Goal, constraints, completed evidence, active blocker, next verified action | Create a compact handoff and continue only with those facts preserved | The next action runs with the preserved state; requirements were not silently dropped |
-| Rate limit | Provider response and `Retry-After` when present | Honor the documented wait/retry path within the task budget | The same operation succeeds, or the verified next retry time is handed off |
+| Context or turn exhaustion | Goal, constraints, completed evidence, active blocker, next verified action | Create a compact handoff and continue with those facts preserved | The next action runs with the preserved state and requirements intact |
+| Rate limit | Provider response and `Retry-After` when present | Honor the documented wait/retry path within the task budget | The same operation succeeds, or a verified next retry time is handed off |
 | Missing dependency | Exact import/build failure plus project tooling/lockfile state | Use declared project tooling in an isolated local environment | An import, build, or focused test passes |
-| Permission or secret constraint | The consent/credential boundary and redacted failure state | Stop and request the minimum user action | Retry happens only after visible authorization or available credentials |
+| Permission or secret constraint | The consent/credential boundary and redacted failure state | Request the minimum user action | Retry follows visible authorization or available credentials |
 
-## Authority is deliberately bounded
+## Authority model
 
-Whetstone starts with read-only diagnostics and local, reversible remedies. It does **not** automatically:
+Whetstone begins with read-only diagnostics and local, reversible remedies. The following actions require explicit user authorization:
 
-- change approval or YOLO modes, permissions, credentials, account selection, quotas, or billing;
-- change provider/model/profile settings, browser trust, global runtime/configuration, OS/network policy, or shell setup;
-- restart services, reset/delete state, spend money, or modify production data, deployments, migrations, git history, or task acceptance criteria.
+- approval or YOLO modes, permissions, credentials, account selection, quotas, and billing;
+- provider/model/profile settings, browser trust, global runtime/configuration, OS/network policy, and shell setup;
+- service restarts, state reset/deletion, spending, production data changes, deployments, migrations, Git history changes, and task acceptance-criteria changes.
 
-A permission or secret boundary is a user-action-required blocker—not something to work around. See [Authority Boundaries](SKILL.md#authority-boundaries) for the canonical list.
+A permission or secret boundary produces a user-action-required handoff. See [Authority Boundaries](SKILL.md#authority-boundaries) for the canonical list.
 
 ## Install
 
@@ -71,11 +71,11 @@ This installation path is verified against an isolated Hermes home. After instal
 
 ### Other skill-capable agents
 
-Use the platform’s documented skill-installation workflow with [SKILL.md](SKILL.md). This repository does not provide an SDK, MCP server, package, CLI, HTTP API, or a universal compatibility promise.
+Use the platform’s documented skill-installation workflow with [SKILL.md](SKILL.md). The repository supplies the instruction artifact; host runtimes supply their own integration surfaces.
 
 ## Use it
 
-Give Whetstone a real blocker, not a vague request to “try harder.” A good invocation includes the original task and the observed failure:
+A precise invocation includes the original task and the observed failure:
 
 ```text
 The objective is <original user goal>.
@@ -85,30 +85,29 @@ try the lowest-risk authorized recovery once, rerun the blocked operation, then
 continue the original task or give me the smallest exact handoff.
 ```
 
-Whetstone should treat these as non-negotiable:
+Operating requirements:
 
-- do not invent a runtime limit without tool output, logs, or current documentation;
-- do not blindly retry, restart-loop, rotate accounts/keys, or weaken security;
-- do not turn recovery into a nested project or report the diagnosis as success;
-- do not claim recovery until the blocked path is rerun successfully.
+- Ground runtime limits in tool output, logs, or current documentation.
+- Use one evidence-led recovery attempt per hypothesis.
+- Keep account, key, and security controls within their existing authority boundary.
+- Report recovery after a successful rerun of the blocked path.
 
-## Current scope and limitations
+## Scope
 
-- Whetstone does not guarantee recovery, task completion, or any safety outcome.
-- It does not diagnose every root cause and does not retry indefinitely.
-- Its effectiveness depends on truthful tool output, current documentation/live state, the host agent’s available tools, and the authority already granted.
-- It has no published compatibility matrix, benchmark, telemetry service, managed support channel, or release history. Do not infer support for a host, model, provider, operating system, or marketplace from this repository.
+Whetstone focuses on bounded recovery for evidenced execution blockers. Recovery outcomes depend on truthful tool output, current documentation/live state, the host agent’s available tools, and the authority already granted.
+
+The project currently publishes a canonical skill, a verified Hermes installation path, and source documentation. Compatibility records, recovery transcripts, benchmarks, telemetry, release history, and managed support will appear as maintained evidence becomes available.
 
 ## Contributing and feedback
 
-Whetstone is MIT licensed and welcomes focused issues or pull requests. For a behavior change, include the relevant blocker scenario and show that the change preserves:
+Whetstone is MIT licensed and welcomes focused issues or pull requests. A behavior change should include the relevant blocker scenario and show that it preserves:
 
 1. objective preservation;
 2. bounded authority;
 3. rerun-based proof of recovery; and
 4. a clear resume-or-handoff outcome.
 
-If you report an issue, include the blocker category, redacted evidence, the host agent/runtime, what recovery was attempted, and whether the original operation was rerun.
+Issue reports work best with the blocker category, redacted evidence, host agent/runtime, attempted recovery, and result of the original-operation rerun.
 
 ## Project files
 
