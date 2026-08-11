@@ -32,7 +32,7 @@ Whetstone turns a blocker into a bounded decision loop:
 4. **Prove recovery.** Rerun the original blocked operation, or an explicitly equivalent focused check. Recovery proof comes from the operation itself.
 5. **Resume or hand off.** Return immediately to the original objective. A remaining blocker receives a compact handoff with the objective, symptom, evidence, attempted remedies, and smallest exact user action.
 
-The complete contract lives in [SKILL.md](SKILL.md).
+The complete contract lives in [SKILL.md](SKILL.md). See the [verified local-skill recovery trace](examples/hermes-local-skill-resolution.md) for an exercised tool-resolution recovery.
 
 ## Failure patterns: evidence → allowed action → proof
 

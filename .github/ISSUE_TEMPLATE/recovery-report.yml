@@ -1,0 +1,70 @@
+name: Recovery report / compatibility feedback
+description: Share a redacted, reproducible execution blocker and its rerun outcome.
+title: "recovery: "
+labels: ["recovery-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for contributing concrete execution evidence. Do not include secrets, credentials, private URLs, or production data.
+  - type: input
+    id: runtime
+    attributes:
+      label: Agent runtime and version
+      description: Include the agent/runtime and its version.
+      placeholder: Hermes Agent 0.x, Claude Code x.x, ...
+    validations:
+      required: true
+  - type: dropdown
+    id: blocker
+    attributes:
+      label: Blocker category
+      options:
+        - Tool error or no-op
+        - Context or turn exhaustion
+        - Rate limit
+        - Missing dependency
+        - Provider or authentication failure
+        - Permission boundary
+        - Other documented runtime constraint
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Original objective
+      description: State the task that was blocked, without private data.
+    validations:
+      required: true
+  - type: textarea
+    id: symptom
+    attributes:
+      label: Exact redacted symptom
+      description: Include the error, no-op observation, or limit response and relevant prerequisite state.
+    validations:
+      required: true
+  - type: textarea
+    id: recovery
+    attributes:
+      label: Recovery attempted
+      description: Describe the lowest-risk action attempted and why it stayed within your authority boundary.
+    validations:
+      required: true
+  - type: dropdown
+    id: rerun
+    attributes:
+      label: Original operation rerun outcome
+      options:
+        - Succeeded
+        - Still blocked with a different observed result
+        - Still blocked with the same observed result
+        - Not rerun; explain below
+    validations:
+      required: true
+  - type: textarea
+    id: authority
+    attributes:
+      label: Authority or safety boundary
+      description: Note any permission, credential, configuration, quota, production-data, or user-action boundary encountered.
+    validations:
+      required: true
