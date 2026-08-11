@@ -69,6 +69,14 @@ hermes skills install \
 
 此安装路径已经在隔离 Hermes home 中验证。安装后，请开启新会话，或按你的 Hermes workflow 显式加载该 skill。
 
+### 支持 skills.sh 的 Agent
+
+```bash
+npx skills add skbylife/whetstone
+```
+
+skills CLI 可从 GitHub 仓库解析 skill，并在 skills.sh 目录记录聚合安装量；请在已支持的 Agent runtime 中使用此路径。
+
 ### 其他支持 skill 的 Agent
 
 请通过平台已文档化的 skill-installation workflow 使用 [SKILL.md](SKILL.md)。本仓库提供指令制品；host runtime 提供各自的集成界面。

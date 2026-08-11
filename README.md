@@ -69,6 +69,14 @@ hermes skills install \
 
 This installation path is verified against an isolated Hermes home. After installing, start a new session or load the skill explicitly according to your Hermes workflow.
 
+### skills.sh-compatible agents
+
+```bash
+npx skills add skbylife/whetstone
+```
+
+The skills CLI resolves skills from GitHub repositories and tracks aggregate installations in the skills.sh directory. Use this path with a supported agent runtime.
+
 ### Other skill-capable agents
 
 Use the platform’s documented skill-installation workflow with [SKILL.md](SKILL.md). The repository supplies the instruction artifact; host runtimes supply their own integration surfaces.
