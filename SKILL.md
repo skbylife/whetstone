@@ -1,7 +1,7 @@
 ---
 name: whetstone
-description: MANDATORY: tool error/no-op, turn cap, or rate limit.
-version: 1.0.1
+description: "Evidenced execution blocker: recover safely, verify, resume."
+version: 1.0.2
 author: Hermes Agent
 license: MIT
 metadata:
@@ -21,33 +21,36 @@ Keep the user's original objective primary. This skill removes a demonstrated ex
 | Need | Use |
 |---|---|
 | A concrete tool, context, rate-limit, dependency, or permission blocker | Whetstone |
-| Work keeps failing after the execution path is usable | `pua` |
+| The blocked operation now runs, but task implementation or delivery still fails or needs persistence | `pua` |
 | Diagnose or configure Hermes itself | `hermes-agent` troubleshooting |
+
+For a suspected Hermes CLI, gateway, provider, tool-registration, or runtime-configuration fault, load `hermes-agent` troubleshooting first; use Whetstone only once that diagnosis identifies a bounded safe recovery.
 
 Do not call Whetstone “self-healing,” “production-safe,” or a general agent-reliability framework. Its safety comes from explicit authority limits and proof of recovery—not an outcome guarantee.
 
 ## Trigger
 
-Use only with concrete evidence that an execution constraint prevents safe progress: a tool error/no-op, context or turn budget exhaustion, missing capability/dependency, authentication/provider failure, rate limit, or documented runtime/concurrency limit.
+If this skill is loaded after concrete evidence that an execution constraint prevents safe progress, use it to recover the blocked path: a tool error/no-op, context or turn budget exhaustion, missing capability/dependency, authentication/provider failure, rate limit, or documented runtime/concurrency limit.
 
-Do not use merely because work is hard, long, or uncertain. Use `pua` for task-level persistence after the execution environment is usable.
+Do not use merely because work is hard, long, or uncertain. After the blocked operation succeeds, use `pua` only if the remaining task is still stalled or has repeated failures.
 
 ## Recovery Gate
 
 1. **Preserve objective.** State the original objective and the exact blocker with its tool result, error, or observed state. Done when the blocker is testable rather than inferred.
 2. **Classify.** Choose one: local reversible recovery; user action required; hard stop. Read current native documentation and live state before acting. Done when the chosen path does not expand authority.
-3. **Recover once.** Attempt the lowest-risk documented remedy, then retry the original blocked operation. For transient failures, use one bounded retry; change hypothesis after any repeat-identical failure.
-4. **Verify and resume.** Call the blocker cleared only if the original operation now succeeds (or a focused equivalent check proves it). Immediately resume the user objective; do not call recovery itself delivery.
-5. **Handoff if blocked.** Return objective, symptom, evidence, remedies attempted, and the smallest exact user decision/action needed.
+3. **Recover once.** Before retrying, determine whether the original operation could already have taken effect. For uncertain or non-idempotent operations, verify resulting state or use its status/idempotency mechanism; do not retry if completion cannot be safely ruled out. Then attempt the lowest-risk documented remedy and retry the original blocked operation. For transient failures, use one bounded retry; change hypothesis after any repeat-identical failure.
+4. **Verify and resume.** Call the blocker cleared only if the original operation now succeeds (or a focused equivalent check exercises the same tool route, authorization scope, and prerequisite state without introducing side effects). Immediately resume the user objective; do not call recovery itself delivery.
+5. **Handoff if blocked.** Return the objective; operation/tool and target, redacted as needed; observation time and relevant limit/reset time; symptom; evidence; remedies attempted; and the smallest exact user decision/action needed.
 
 ## Constraint Patterns
 
 | Blocker | First safe move | Proof of recovery |
 |---|---|---|
 | Context / max turns | Preserve goal, constraints, completed evidence, and next verified action; continue in a fresh or resumed session when available. Never discard requirements to fit. | The resumed agent can execute the next action with the preserved state. |
-| Tool failure / no-op | Classify transient versus deterministic; inspect tool prerequisites and one alternate diagnostic path. | Rerun the failed operation successfully. |
+| Tool failure / no-op | Distinguish an expected empty result from an unexpected no-op; then classify transient versus deterministic and inspect tool prerequisites and one alternate diagnostic path. | Rerun the failed operation successfully. |
 | Rate limit | Honor `Retry-After`; otherwise use bounded backoff. Do not evade quotas, rotate accounts, or create accounts. | The same operation succeeds, or report its verified next retry time. |
 | Missing dependency | Reuse project tooling and an isolated local environment. Install only declared, non-secret, project-scoped, version-resolved dependencies. | Import, build, or focused test passes. |
+| Provider / authentication failure | Record the exact provider error and inspect the configured route read-only. Request user action for credentials, provider/profile, or approval changes. | The same operation succeeds with visible authorization or available credentials. |
 | Permission / secret | Treat as user action required. Never print, request, store, transmit, or weaken secrets/protection. | Retry only after visibly granted consent or available credentials. |
 
 ## Evidence-Led Examples
